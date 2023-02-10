@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'users' })
 export class UserEntity {
   @PrimaryGeneratedColumn()
@@ -16,7 +16,7 @@ export class UserEntity {
   @Column({ length: 255, nullable: true })
   lastName: string;
 
-  @Column()
+  @Column({ default: 'inactive', nullable: true })
   status: string;
 }
 
