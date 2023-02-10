@@ -7,10 +7,11 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { GetUserDto } from './dto/get-user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -25,6 +26,13 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @ApiExtraModels(GetUserDto)
+  @ApiResponse({
+    status: 200,
+    schema: {
+      $ref: getSchemaPath(GetUserDto),
+    },
+  })
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.usersService.findOne(id);
