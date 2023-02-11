@@ -6,7 +6,7 @@ import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './users.repository';
-import * as Errors from 'src/configs/errors';
+import * as Errors from 'src/constants/errors';
 @Injectable()
 export class UsersService {
   constructor(
