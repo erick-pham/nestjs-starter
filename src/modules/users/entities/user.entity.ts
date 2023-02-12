@@ -6,6 +6,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
+
 @Entity({ name: 'users' })
 export class UserEntity {
   @PrimaryGeneratedColumn()
@@ -24,6 +26,7 @@ export class UserEntity {
   lastName: string;
 
   @Column({ length: 255, nullable: true })
+  @Exclude()
   password: string;
 
   @Column({ default: 'inactive', nullable: true })
