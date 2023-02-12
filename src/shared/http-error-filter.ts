@@ -28,11 +28,16 @@ export class HttpErrorFilter implements ExceptionFilter {
       message: exception.message,
     };
 
-    Logger.warn(
-      `${request.url}`,
-      JSON.stringify({ ...errorResponse, stack: exception.stack }),
-      'Exception',
-    );
+    if (httpStatus) {
+      Logger.warn(`${request.url}`, JSON.stringify(errorResponse), 'Exception');
+    } else {
+      Logger.error(
+        `${request.url}`,
+        JSON.stringify({ ...errorResponse, stack: exception.stack }),
+        'Exception',
+      );
+    }
+
     response.status(httpStatus).json(errorResponse);
   }
 }
