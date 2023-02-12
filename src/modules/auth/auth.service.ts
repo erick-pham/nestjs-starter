@@ -3,12 +3,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 const bcrypt = require('bcrypt');
 import { RegisterUserDto } from 'src/modules/auth/dto/register-auth.dto';
 import { UsersService } from 'src/modules/users/users.service';
-
+import { JwtService } from '@nestjs/jwt';
 import { BCRYPT_SALT_ROUND } from 'src/constants/constants';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
   public async registerUser(registrationData: RegisterUserDto) {
     const hashedPassword = await this.hashPassword(registrationData.password);
@@ -62,9 +65,13 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { email: user.email, sub: user.id };
     return {
-      access_token: 'this.jwtService.sign(payload)',
+      access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async getUserProfile(email: string) {
+    return this.usersService.getByEmail(email);
   }
 }

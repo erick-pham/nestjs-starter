@@ -7,7 +7,7 @@ import {
   Req,
   Request,
 } from '@nestjs/common';
-import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginPayloadDto } from './dto/login-auth.dto';
 import { RegisterUserDto } from './dto/register-auth.dto';
@@ -15,6 +15,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local.guard';
 import RequestWithUser from './interfaces/request-with-user.interface';
 @ApiTags('Authentication')
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -33,12 +34,14 @@ export class AuthController {
     @Req() req: RequestWithUser,
     @Body() loginPayload: LoginPayloadDto,
   ) {
-    return req.user;
+    return this.authService.login(req.user);
+    // return req.user;
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req: RequestWithUser) {
-    return req.user;
+    return this.authService.getUserProfile(req.user.email);
+    // return req.user;
   }
 }
