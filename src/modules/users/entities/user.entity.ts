@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity({ name: 'users' })
 export class UserEntity {
   @PrimaryGeneratedColumn()
@@ -16,8 +23,20 @@ export class UserEntity {
   @Column({ length: 255, nullable: true })
   lastName: string;
 
+  @Column({ length: 255, nullable: true })
+  password: string;
+
   @Column({ default: 'inactive', nullable: true })
   status: string;
+
+  @CreateDateColumn({ type: 'date' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'date' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'date' })
+  deletedAt: Date;
 }
 
 export default UserEntity;

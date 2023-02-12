@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 // import { plainToClass } from 'class-transformer';
 import { UserEntity } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  CreateUserWithPasswordDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './users.repository';
 import * as Errors from 'src/constants/errors';
@@ -16,7 +19,9 @@ export class UsersService {
   ) {}
   private readonly logger = new Logger(UsersService.name);
 
-  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+  async create(
+    createUserDto: CreateUserDto | CreateUserWithPasswordDto,
+  ): Promise<UserEntity> {
     this.logger.log('Create new user');
     return this.dataSource.transaction(async (manager) => {
       const userRepository = manager.withRepository(this.usersRepository);
@@ -28,13 +33,17 @@ export class UsersService {
           Errors.EMAIL_USED,
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
-        // throw new UnprocessableEntityException(Errors.EMAIL_USED);
       }
       return userRepository.save(createUserDto);
     });
+  }
 
-    return this.usersRepository.save(createUserDto);
-    // return 'This action adds a new user';
+  async getByEmail(email: string) {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (user) {
+      return user;
+    }
+    throw new HttpException(Errors.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND);
   }
 
   findAll(): Promise<UserEntity[]> {
