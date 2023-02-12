@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 import { RegisterUserDto } from 'src/modules/auth/dto/register-auth.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { BCRYPT_SALT_ROUND } from 'src/constants/constants';
+import { BCRYPT_SALT_ROUND, jwtConstants } from 'src/constants/constants';
 
 @Injectable()
 export class AuthService {
@@ -73,5 +73,16 @@ export class AuthService {
 
   async getUserProfile(email: string) {
     return this.usersService.getByEmail(email);
+  }
+
+  public getCookieWithJwtToken(token: string) {
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${jwtConstants.signOptions.expiresIn}`;
+  }
+
+  public getCookiesForLogOut() {
+    return [
+      'Authentication=; HttpOnly; Path=/; Max-Age=0',
+      'Refresh=; HttpOnly; Path=/; Max-Age=0',
+    ];
   }
 }
