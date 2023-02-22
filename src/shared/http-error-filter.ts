@@ -27,14 +27,14 @@ export class HttpErrorFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       message: exception.message,
     };
-
-    if (httpStatus) {
-      Logger.warn(`${request.url}`, JSON.stringify(errorResponse), 'Exception');
+    const requestId = response.getHeader('requestId');
+    if (httpStatus !== 500) {
+      Logger.warn(exception.message, 'HttpException');
     } else {
       Logger.error(
-        `${request.url}`,
-        JSON.stringify({ ...errorResponse, stack: exception.stack }),
-        'Exception',
+        `${requestId}`,
+        exception.stack,
+        'InternalServerErrorException',
       );
     }
 

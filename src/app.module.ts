@@ -9,6 +9,7 @@ import { dataSourceOptions } from 'src/database/data-source';
 import { LoggerMiddleware } from 'src/middleware/logger.middleware';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { HttpErrorFilter } from './shared/http-error-filter';
+import { HealthModule } from './modules/health/health.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -18,6 +19,7 @@ import { HttpErrorFilter } from './shared/http-error-filter';
     }),
     UsersModule,
     AuthModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [

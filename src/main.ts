@@ -5,8 +5,61 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+import * as winston from 'winston';
+import {
+  WinstonModule,
+  utilities as nestWinstonModuleUtilities,
+} from 'nest-winston';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const instance = winston.createLogger({
+    transports: [
+      new winston.transports.Console({
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.ms(),
+          winston.format.colorize(),
+          nestWinstonModuleUtilities.format.nestLike('MyApp', {
+            // options
+          }),
+        ),
+      }),
+      new winston.transports.File({
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.ms(),
+          nestWinstonModuleUtilities.format.nestLike('MyApp', {
+            // options
+          }),
+        ),
+        dirname: './',
+        level: 'error',
+        filename: 'error.log',
+      }),
+      new winston.transports.File({
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.ms(),
+          nestWinstonModuleUtilities.format.nestLike('MyApp', {
+            // options
+          }),
+        ),
+        dirname: './',
+        filename: 'combined.log',
+      }),
+      // other transports...
+    ],
+  });
+
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({
+      instance,
+    }),
+    cors: true,
+  });
   app.use(cookieParser());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.setGlobalPrefix('api');
