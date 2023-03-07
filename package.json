@@ -103,7 +103,9 @@
   },
   "pkg": {
     "scripts": [],
-    "assets": [],
+    "assets": [
+      "node_modules/**"
+    ],
     "targets": []
   }
 }
