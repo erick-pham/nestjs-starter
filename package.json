@@ -5,7 +5,10 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "bin": "./dist/main.js",
   "scripts": {
+    "pkg:win": "pkg . --target node18-win-x64 --compress GZip -o app.run",
+    "pkg:alpine": "pkg . --target node18-alpine-x64 --compress GZip -o app.run",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -97,5 +100,10 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "pkg": {
+    "scripts": [],
+    "assets": [],
+    "targets": []
   }
 }
