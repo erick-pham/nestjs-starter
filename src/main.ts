@@ -19,8 +19,7 @@ async function bootstrap() {
     transports: [
       new winston.transports.Console({
         format: winston.format.combine(
-          winston.format.timestamp(),
-          winston.format.ms(),
+          winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
           winston.format.colorize(),
           nestWinstonModuleUtilities.format.nestLike('MyApp', {
             // options
@@ -29,8 +28,7 @@ async function bootstrap() {
       }),
       new winston.transports.File({
         format: winston.format.combine(
-          winston.format.timestamp(),
-          winston.format.ms(),
+          winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
           nestWinstonModuleUtilities.format.nestLike('MyApp', {
             // options
           }),
@@ -41,8 +39,7 @@ async function bootstrap() {
       }),
       new winston.transports.File({
         format: winston.format.combine(
-          winston.format.timestamp(),
-          winston.format.ms(),
+          winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
           nestWinstonModuleUtilities.format.nestLike('MyApp', {
             // options
           }),

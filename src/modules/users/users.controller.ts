@@ -18,7 +18,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
-
+import * as GetUserExample from './dto/get-user-example';
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
@@ -37,8 +37,18 @@ export class UsersController {
   @ApiExtraModels(GetUserDto)
   @ApiResponse({
     status: 200,
-    schema: {
-      $ref: getSchemaPath(GetUserDto),
+    description: 'Successful response',
+    content: {
+      'application/json': {
+        schema: {
+          $ref: getSchemaPath(GetUserDto),
+        },
+        examples: {
+          UserDetail1: { value: GetUserExample.example1 },
+          UserDetail2: { value: GetUserExample.example2 },
+          UserDetail3: { value: GetUserExample.example2 },
+        },
+      },
     },
   })
   @Get(':id')
