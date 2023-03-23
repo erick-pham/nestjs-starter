@@ -1,3 +1,4 @@
+import { PaginationParams } from 'src/shared/pagination-params';
 import {
   Repository,
   ObjectLiteral,
@@ -5,7 +6,15 @@ import {
   FindManyOptions,
   SaveOptions,
   DeepPartial,
-  FindOneOptions
+  FindOneOptions,
+  FindOptionsOrder,
+  FindOptionsSelect,
+  Equal,
+  In,
+  Not,
+  MoreThanOrEqual,
+  LessThanOrEqual,
+  Like
 } from 'typeorm';
 
 export interface BaseInterfaceRepository<T extends ObjectLiteral> {
@@ -29,8 +38,12 @@ export class BaseRepository<T extends ObjectLiteral>
   implements BaseInterfaceRepository<T>
 {
   private baseRepository: Repository<T>;
+  private attributes: string[];
   protected constructor(entity: Repository<T>) {
     this.baseRepository = entity;
+    this.attributes = entity.metadata.ownColumns.map(
+      (column) => column.propertyName
+    );
   }
   // constructor(private baseRepository: Repository<T>) {
   //   super(
@@ -82,5 +95,119 @@ export class BaseRepository<T extends ObjectLiteral>
 
   find(options?: FindManyOptions<T>): Promise<T[]> {
     return this.baseRepository.find(options);
+  }
+
+  getSorts(string: string | undefined): Record<string, string> {
+    const result: Record<string, string> = {};
+    if (string) {
+      string.split(',').forEach((i) => {
+        if (i[0] === '-') {
+          if (!this.attributes.includes(i.slice(1))) {
+            return;
+          }
+        } else {
+          if (!this.attributes.includes(i)) {
+            return;
+          }
+        }
+        if (i[0] === '-') {
+          result[i.slice(1)] = 'DESC';
+        } else {
+          result[i] = 'ASC';
+        }
+      });
+    }
+
+    return result;
+  }
+
+  selectAttributes(attribute: string | undefined) {
+    if (!attribute || attribute.length === 0) {
+      return this.attributes;
+    } else {
+      const attributes = attribute.split(',');
+      let rs = [];
+      let unselectedAtt = attributes.filter((att) => att.includes('!'));
+      unselectedAtt = unselectedAtt.map((i) => i.slice(1));
+      rs = attributes.filter((att) => !att.includes('!'));
+      if (rs.length === 0) {
+        rs = this.attributes.filter((i) => !unselectedAtt.includes(i));
+      }
+      return rs.filter((r) => this.attributes.includes(r));
+    }
+  }
+
+  getFilters(
+    inputs: Record<string, Record<string, string>> | undefined
+  ): Record<string, object> {
+    // const inputs: Record<string, Record<string, string>> = {};
+    if (!inputs) {
+      return {};
+    }
+    const result: Record<string, object> = {};
+    Object.keys(inputs).forEach((key) => {
+      if (!this.attributes.includes(key)) {
+        return;
+      }
+      result[key] = {};
+      Object.keys(inputs[key]).forEach((operator) => {
+        if (operator === 'eq') {
+          result[key] = Equal(inputs[key][operator]);
+        }
+        if (operator === 'or') {
+          result[key] = In(inputs[key][operator].split(','));
+        }
+        if (operator === 'neq') {
+          result[key] = Not(inputs[key][operator]);
+        }
+        if (operator === 'in') {
+          result[key] = In(inputs[key][operator].split(','));
+        }
+        if (operator === 'notIn') {
+          result[key] = Not(In(inputs[key][operator].split(',')));
+        }
+        if (operator === 'gte') {
+          result[key] = MoreThanOrEqual(inputs[key][operator]);
+        }
+        if (operator === 'lte') {
+          result[key] = LessThanOrEqual(inputs[key][operator]);
+        }
+        if (operator === 'startsWith') {
+          result[key] = Like(`${inputs[key][operator]}%`);
+        }
+        if (operator === 'endsWith') {
+          result[key] = Like(`%${inputs[key][operator]}`);
+        }
+        if (operator === 'substring') {
+          result[key] = Like(`%${inputs[key][operator]}%`);
+        }
+      });
+    });
+    return result;
+  }
+
+  async search({
+    searchTerm,
+    pageSize,
+    pageNumber,
+    attributes,
+    order,
+    filters
+  }: PaginationParams) {
+    const [items, count] = await this.baseRepository.findAndCount({
+      order: this.getSorts(order) as unknown as FindOptionsOrder<T>,
+      where: this.getFilters(filters) as FindOptionsWhere<T>,
+      skip: (pageNumber - 1) * pageSize,
+      take: pageSize,
+      select: this.selectAttributes(
+        attributes
+      ) as unknown as FindOptionsSelect<T>
+    });
+
+    return {
+      items,
+      numbersOfRecord: count,
+      numbersOfPage: Math.ceil(count / (pageSize || 1))
+    };
   }
 }

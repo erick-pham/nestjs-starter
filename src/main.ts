@@ -11,7 +11,7 @@ dotenv.config();
 import * as winston from 'winston';
 import {
   WinstonModule,
-  utilities as nestWinstonModuleUtilities,
+  utilities as nestWinstonModuleUtilities
 } from 'nest-winston';
 
 async function bootstrap() {
@@ -23,45 +23,45 @@ async function bootstrap() {
           winston.format.colorize(),
           nestWinstonModuleUtilities.format.nestLike('MyApp', {
             // options
-          }),
-        ),
+          })
+        )
       }),
       new winston.transports.File({
         format: winston.format.combine(
           winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
           nestWinstonModuleUtilities.format.nestLike('MyApp', {
             // options
-          }),
+          })
         ),
         dirname: './',
         level: 'error',
-        filename: 'error.log',
+        filename: 'error.log'
       }),
       new winston.transports.File({
         format: winston.format.combine(
           winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
           nestWinstonModuleUtilities.format.nestLike('MyApp', {
             // options
-          }),
+          })
         ),
         dirname: './',
-        filename: 'combined.log',
-      }),
+        filename: 'combined.log'
+      })
       // other transports...
-    ],
+    ]
   });
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
-      instance,
+      instance
     }),
-    cors: true,
+    cors: true
   });
   app.use(cookieParser());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.setGlobalPrefix('api');
   app.use(helmet());
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const config = new DocumentBuilder()
     .setTitle('NestJS Starter')
     .setDescription('The users API description')

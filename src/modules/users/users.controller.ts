@@ -7,18 +7,20 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query
 } from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiResponse,
   getSchemaPath,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import * as GetUserExample from './dto/get-user-example';
+import { PaginationParams } from 'src/shared/pagination-params';
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
@@ -30,8 +32,11 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(
+    @Query()
+    searchListAndPagination: PaginationParams
+  ) {
+    return this.usersService.searchForUsers(searchListAndPagination);
   }
 
   @ApiExtraModels(GetUserDto)
@@ -41,15 +46,15 @@ export class UsersController {
     content: {
       'application/json': {
         schema: {
-          $ref: getSchemaPath(GetUserDto),
+          $ref: getSchemaPath(GetUserDto)
         },
         examples: {
           UserDetail1: { value: GetUserExample.example1 },
           UserDetail2: { value: GetUserExample.example2 },
-          UserDetail3: { value: GetUserExample.example2 },
-        },
-      },
-    },
+          UserDetail3: { value: GetUserExample.example2 }
+        }
+      }
+    }
   })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -59,7 +64,7 @@ export class UsersController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserDto
   ) {
     return this.usersService.update(id, updateUserDto);
   }

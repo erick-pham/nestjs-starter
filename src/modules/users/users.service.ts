@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 // import { plainToClass } from 'class-transformer';
 import { UserEntity } from './entities/user.entity';
@@ -10,6 +9,7 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './users.repository';
 import * as Errors from 'src/constants/errors';
+import { PaginationParams } from 'src/shared/pagination-params';
 @Injectable()
 export class UsersService {
   constructor(
@@ -76,6 +76,9 @@ export class UsersService {
     return `This action removes a #${id} user`;
   }
 
+  searchForUsers(searchListAndPagination: PaginationParams) {
+    return this.usersRepository.search(searchListAndPagination);
+  }
   // transform(model: UserEntity, transformOptions = {}): ModelEntity {
   //   return plainToClass(ModelEntity, model, transformOptions) as ModelEntity;
   // }
