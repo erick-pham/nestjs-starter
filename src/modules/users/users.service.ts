@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import {
   CreateUserDto,
-  CreateUserWithPasswordDto,
+  CreateUserWithPasswordDto
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './users.repository';
@@ -15,23 +15,23 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: UserRepository,
-    private dataSource: DataSource,
+    private dataSource: DataSource
   ) {}
   private readonly logger = new Logger(UsersService.name);
 
   async create(
-    createUserDto: CreateUserDto | CreateUserWithPasswordDto,
+    createUserDto: CreateUserDto | CreateUserWithPasswordDto
   ): Promise<UserEntity> {
     this.logger.log('Create new user');
     return this.dataSource.transaction(async (manager) => {
       const userRepository = manager.withRepository(this.usersRepository);
       const checkUser = await userRepository.findOneBy({
-        email: createUserDto.email,
+        email: createUserDto.email
       });
       if (checkUser) {
         throw new HttpException(
           Errors.EMAIL_USED,
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.UNPROCESSABLE_ENTITY
         );
       }
       return userRepository.save(createUserDto);
@@ -57,7 +57,7 @@ export class UsersService {
 
   async findOne(id: number): Promise<UserEntity | null> {
     const user = await this.usersRepository.findOne({
-      where: { id },
+      where: { id }
     });
     if (!user) {
       throw new HttpException(Errors.ENTITY_NOT_FOUND, HttpStatus.BAD_REQUEST);
