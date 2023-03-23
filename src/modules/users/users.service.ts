@@ -13,7 +13,6 @@ import * as Errors from 'src/constants/errors';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserEntity)
     private usersRepository: UserRepository,
     private dataSource: DataSource
   ) {}
@@ -24,7 +23,9 @@ export class UsersService {
   ): Promise<UserEntity> {
     this.logger.log('Create new user');
     return this.dataSource.transaction(async (manager) => {
-      const userRepository = manager.withRepository(this.usersRepository);
+      const userRepository = manager.withRepository(
+        this.usersRepository.getInstance()
+      );
       const checkUser = await userRepository.findOneBy({
         email: createUserDto.email
       });
@@ -47,11 +48,11 @@ export class UsersService {
   }
 
   findAll(): Promise<UserEntity[]> {
-    return this.dataSource.transaction(async (manager) => {
-      const userRepository = manager.withRepository(this.usersRepository);
-      return userRepository.find();
-    });
-    // return this.usersRepository.find();
+    // return this.dataSource.transaction(async (manager) => {
+    //   const userRepository = manager.withRepository(this.usersRepository);
+    //   return userRepository.find();
+    // });
+    return this.usersRepository.find();
     // return `This action returns all users`;
   }
 
