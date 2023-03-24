@@ -39,6 +39,14 @@ export class UsersService {
     });
   }
 
+  async getById(id: string) {
+    const user = await this.usersRepository.findOneById(id);
+    if (user) {
+      return user;
+    }
+    throw new HttpException(Errors.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND);
+  }
+
   async getByEmail(email: string) {
     const user = await this.usersRepository.findOne({ where: { email } });
     if (user) {

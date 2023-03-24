@@ -14,7 +14,8 @@ import {
   Not,
   MoreThanOrEqual,
   LessThanOrEqual,
-  Like
+  Like,
+  ObjectID
 } from 'typeorm';
 
 export interface BaseInterfaceRepository<T extends ObjectLiteral> {
@@ -32,6 +33,7 @@ export interface BaseInterfaceRepository<T extends ObjectLiteral> {
     options: FindOptionsWhere<T> | FindOptionsWhere<T>[]
   ): Promise<T | null>;
   findOne(options: FindOneOptions<T>): Promise<T | null>;
+  findOneById(id: number | string | Date | ObjectID): Promise<T | null>;
 }
 
 export class BaseRepository<T extends ObjectLiteral>
@@ -90,6 +92,13 @@ export class BaseRepository<T extends ObjectLiteral>
   findOneBy(
     options: FindOptionsWhere<T> | FindOptionsWhere<T>[]
   ): Promise<T | null> {
+    return this.baseRepository.findOneBy(options);
+  }
+
+  findOneById(id: any): Promise<T | null> {
+    const options: FindOptionsWhere<T> = {
+      id: id
+    };
     return this.baseRepository.findOneBy(options);
   }
 

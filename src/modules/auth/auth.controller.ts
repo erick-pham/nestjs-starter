@@ -6,7 +6,7 @@ import {
   UseGuards,
   Req,
   Res,
-  HttpCode,
+  HttpCode
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -16,6 +16,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local.guard';
 import RequestWithUser from './interfaces/request-with-user.interface';
 import { Response as ResponseExpress } from 'express';
+import { JwtOrApiKeyAuthGuard } from './guards/api-key-or-jwt.guard';
 
 @ApiTags('Authentication')
 @ApiBearerAuth()
@@ -24,7 +25,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiCreatedResponse({
-    description: 'The record has been successfully created.',
+    description: 'The record has been successfully created.'
   })
   @Post('register')
   async registerUser(@Body() registrationData: RegisterUserDto) {
@@ -37,21 +38,21 @@ export class AuthController {
   async logIn(
     @Req() req: RequestWithUser,
     @Res() response: ResponseExpress,
-    @Body() loginPayload: LoginPayloadDto,
+    @Body() loginPayload: LoginPayloadDto
   ) {
     const tokenData = await this.authService.login(req.user);
     const cookie = this.authService.getCookieWithJwtToken(
-      tokenData.access_token,
+      tokenData.access_token
     );
     response.setHeader('Set-Cookie', cookie);
     response.send(tokenData);
     return;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtOrApiKeyAuthGuard)
   @Get('profile')
   getProfile(@Req() req: RequestWithUser) {
-    return this.authService.getUserProfile(req.user.email);
+    return this.authService.getUserProfile(req.user.id as unknown as string);
   }
 
   @UseGuards(JwtAuthGuard)

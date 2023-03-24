@@ -10,7 +10,7 @@ import { BCRYPT_SALT_ROUND, jwtConstants } from 'src/constants/constants';
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   public async registerUser(registrationData: RegisterUserDto) {
@@ -18,7 +18,7 @@ export class AuthService {
     try {
       const createdUser = await this.usersService.create({
         ...registrationData,
-        password: hashedPassword,
+        password: hashedPassword
       });
       // delete user.password;
       const { password, ...result } = createdUser;
@@ -29,7 +29,7 @@ export class AuthService {
       }
       throw new HttpException(
         'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -39,7 +39,7 @@ export class AuthService {
       const user = await this.usersService.getByEmail(email);
       const isPasswordMatching = await this.verifyPassword(
         plainTextPassword,
-        user.password + '',
+        user.password + ''
       );
 
       if (isPasswordMatching) {
@@ -59,7 +59,7 @@ export class AuthService {
 
   private async verifyPassword(
     plainTextPassword: string,
-    hashedPassword: string,
+    hashedPassword: string
   ) {
     return await bcrypt.compare(plainTextPassword, hashedPassword);
   }
@@ -67,12 +67,12 @@ export class AuthService {
   async login(user: any) {
     const payload = { email: user.email, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload)
     };
   }
 
-  async getUserProfile(email: string) {
-    return this.usersService.getByEmail(email);
+  async getUserProfile(id: string) {
+    return this.usersService.getById(id);
   }
 
   public getCookieWithJwtToken(token: string) {
@@ -82,7 +82,7 @@ export class AuthService {
   public getCookiesForLogOut() {
     return [
       'Authentication=; HttpOnly; Path=/; Max-Age=0',
-      'Refresh=; HttpOnly; Path=/; Max-Age=0',
+      'Refresh=; HttpOnly; Path=/; Max-Age=0'
     ];
   }
 }
