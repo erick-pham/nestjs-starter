@@ -13,10 +13,10 @@ export class UserRepository extends BaseRepository<UserEntity> {
     super(userRepository);
   }
 
-  customFindByEmail(email: string) {
-    return this.userRepository
-      .createQueryBuilder(UserEntity.name)
-      .where('email = :email', { email })
-      .getMany();
-  }
+  // customFindByEmail(email: string) {
+  //   return this.userRepository
+  //     .createQueryBuilder(UserEntity.name)
+  //     .where('email = :email', { email })
+  //     .getMany();
+  // }
 }

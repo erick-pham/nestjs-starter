@@ -12,8 +12,8 @@ import * as qs from 'qs';
 
 export class PaginationParams {
   @IsOptional()
-  @Type(() => String)
   @IsString()
+  @Type(() => String)
   searchTerm?: string;
 
   @ApiProperty({

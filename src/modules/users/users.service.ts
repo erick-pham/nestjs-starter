@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-// import { plainToClass } from 'class-transformer';
 import { UserEntity } from './entities/user.entity';
 import {
   CreateUserDto,
@@ -61,7 +60,6 @@ export class UsersService {
     //   return userRepository.find();
     // });
     return this.usersRepository.find();
-    // return `This action returns all users`;
   }
 
   async findOne(id: number): Promise<UserEntity | null> {
@@ -70,28 +68,19 @@ export class UsersService {
     });
     if (!user) {
       throw new HttpException(Errors.ENTITY_NOT_FOUND, HttpStatus.BAD_REQUEST);
-      // throw new NotFoundException('Model not found');
     }
     return user;
-    // return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} user`;
   }
 
   searchForUsers(searchListAndPagination: PaginationParams) {
     return this.usersRepository.search(searchListAndPagination);
   }
-  // transform(model: UserEntity, transformOptions = {}): ModelEntity {
-  //   return plainToClass(ModelEntity, model, transformOptions) as ModelEntity;
-  // }
-
-  // transformMany(model: UserEntity[], transformOptions = {}): ModelEntity[] {
-  //   return model.map((model) => this.transform(model, transformOptions));
-  // }
 }
