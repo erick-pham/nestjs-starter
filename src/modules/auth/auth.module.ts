@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { AuthController } from 'src/modules/auth/auth.controller';
@@ -16,6 +16,7 @@ import { ApiKeyStrategy } from './strategies/api-key.strategy';
 
 @Module({
   imports: [
+    CacheModule.register(),
     UsersModule,
     PassportModule,
     JwtModule.register(jwtConstants),

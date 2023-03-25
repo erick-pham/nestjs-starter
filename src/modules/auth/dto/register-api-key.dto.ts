@@ -4,7 +4,9 @@ import {
   IsArray,
   MinLength,
   MaxLength,
-  IsOptional
+  IsOptional,
+  IsDateString,
+  IsISO8601
 } from 'class-validator';
 
 export class RegisterApiKeyDto {
@@ -31,4 +33,12 @@ export class RegisterApiKeyDto {
     maxLength: 255
   })
   apiName: string;
+
+  @IsISO8601({ strict: true })
+  @ApiProperty({
+    type: Date,
+    default: '2023-03-25T02:13:11.119Z',
+    description: 'Api key expired date'
+  })
+  expiredAt: Date;
 }

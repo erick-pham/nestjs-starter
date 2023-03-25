@@ -44,7 +44,7 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new HttpException(Errors.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND);
+    throw new HttpException(Errors.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
   }
 
   async getByEmail(email: string) {
