@@ -13,7 +13,8 @@ export class ApiKeyService {
 
   public async verifyApiKey(apiKey: string) {
     const dbApiKey = await this.apikeyRepository.findOneBy({
-      apiKey: apiKey
+      apiKey: apiKey,
+      isRevoked: false
     });
 
     if (!dbApiKey || !compareKeys(dbApiKey.apiSecret, apiKey)) {
@@ -35,11 +36,14 @@ export class ApiKeyService {
       apiName: registrationData.apiName,
       scopes: registrationData.scopes
     });
-    console.log(dbCreated);
     return this.apikeyRepository.findOneById(dbCreated.id);
   }
 
-  public async revoke(userId: number, apiKey: string) {
-    return true;
+  public async revoke(apiKey: string) {
+    const dbUpdatedResult = await this.apikeyRepository.update(
+      { apiKey },
+      { isRevoked: true }
+    );
+    return dbUpdatedResult;
   }
 }

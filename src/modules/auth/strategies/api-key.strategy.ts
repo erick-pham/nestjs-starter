@@ -13,7 +13,7 @@ export class ApiKeyStrategy extends PassportStrategy(Strategy, 'apikey') {
   authenticate(req: Request, options?: any): void {
     let apiKey: string =
       (req.headers['x-api-key'] as string) ?? (req.query.api_key as string);
-    console.log('dbApiKey', apiKey);
+
     if (!apiKey) {
       apiKey = req.headers['authorization'] as string;
       if (apiKey && apiKey.split(' ')[0] === 'Apikey' && apiKey.split(' ')[1]) {
@@ -34,7 +34,8 @@ export class ApiKeyStrategy extends PassportStrategy(Strategy, 'apikey') {
           this.fail(new UnauthorizedException(), 401);
         } else {
           const user = {
-            id: apikeyData.userId
+            id: apikeyData.userId,
+            apiKey: apikeyData.apiKey
           };
           req.user = user;
           this.success(user, null);

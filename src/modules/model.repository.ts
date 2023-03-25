@@ -15,8 +15,10 @@ import {
   MoreThanOrEqual,
   LessThanOrEqual,
   Like,
-  ObjectID
+  ObjectID,
+  UpdateResult
 } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 export interface BaseInterfaceRepository<T extends ObjectLiteral> {
   getInstance(): Repository<T>;
@@ -34,6 +36,19 @@ export interface BaseInterfaceRepository<T extends ObjectLiteral> {
   ): Promise<T | null>;
   findOne(options: FindOneOptions<T>): Promise<T | null>;
   findOneById(id: number | string | Date | ObjectID): Promise<T | null>;
+  update(
+    criteria:
+      | string
+      | string[]
+      | number
+      | number[]
+      | Date
+      | Date[]
+      | ObjectID
+      | ObjectID[]
+      | FindOptionsWhere<T>,
+    partialEntity: QueryDeepPartialEntity<T>
+  ): Promise<UpdateResult>;
 }
 
 export class BaseRepository<T extends ObjectLiteral>
@@ -104,6 +119,22 @@ export class BaseRepository<T extends ObjectLiteral>
 
   find(options?: FindManyOptions<T>): Promise<T[]> {
     return this.baseRepository.find(options);
+  }
+
+  update(
+    criteria:
+      | string
+      | string[]
+      | number
+      | number[]
+      | Date
+      | Date[]
+      | ObjectID
+      | ObjectID[]
+      | FindOptionsWhere<T>,
+    partialEntity: QueryDeepPartialEntity<T>
+  ): Promise<UpdateResult> {
+    return this.baseRepository.update(criteria, partialEntity);
   }
 
   getSorts(string: string | undefined): Record<string, string> {

@@ -6,15 +6,15 @@ import {
   Req,
   HttpCode
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiHeader, ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { RegisterApiKeyDto } from './dto/register-api-key.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import RequestWithUser from './interfaces/request-with-user.interface';
+import RequestWithUser from '../../shared/interfaces/request-with-user.interface';
 import { ApiKeyService } from './api-key.service';
+import { ApiKeyAuthGuard } from './guards/api-key.guard';
 
 @ApiTags('Authentication-ApiKey')
-@ApiBearerAuth()
-@Controller('api-key')
+@Controller('apikey')
 export class ApiKeyController {
   constructor(private readonly apikeyService: ApiKeyService) {}
 
@@ -27,17 +27,17 @@ export class ApiKeyController {
     @Req() req: RequestWithUser,
     @Body() registrationData: RegisterApiKeyDto
   ) {
-    console.log(req.user);
     return this.apikeyService.generateKeyAndSecret(
       req.user.id,
       registrationData
     );
   }
 
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(200)
+  @UseGuards(ApiKeyAuthGuard)
+  @HttpCode(204)
+  @ApiHeader({ name: 'x-api-key', required: true })
   @Post('/revoke')
-  async revoke() {
-    return this.apikeyService.revoke(1, 'a');
+  async revoke(@Req() req: RequestWithUser) {
+    return this.apikeyService.revoke(req.user.apiKey);
   }
 }

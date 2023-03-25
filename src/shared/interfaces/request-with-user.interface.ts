@@ -1,7 +1,10 @@
 import { Request } from 'express';
 
-import User from 'src/modules/users/entities/user.entity';
-
+interface User {
+  id: number;
+  email: string | '';
+  apiKey: string | '';
+}
 interface RequestWithUser extends Request {
   user: User;
 }

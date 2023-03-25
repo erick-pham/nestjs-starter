@@ -8,18 +8,17 @@ import {
   Res,
   HttpCode
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginPayloadDto } from './dto/login-auth.dto';
 import { RegisterUserDto } from './dto/register-auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local.guard';
-import RequestWithUser from './interfaces/request-with-user.interface';
+import RequestWithUser from '../../shared/interfaces/request-with-user.interface';
 import { Response as ResponseExpress } from 'express';
 import { JwtOrApiKeyAuthGuard } from './guards/api-key-or-jwt.guard';
 
 @ApiTags('Authentication')
-@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

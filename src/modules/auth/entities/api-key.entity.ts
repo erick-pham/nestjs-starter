@@ -26,8 +26,8 @@ export class ApiKeyEntity {
   @Column({ name: 'api_name', length: 255 })
   apiName: string;
 
-  @Column({ nullable: true, name: 'is_revoked' })
-  isRevoked?: boolean;
+  @Column({ default: false, name: 'is_revoked' })
+  isRevoked: boolean;
 
   @Column({
     type: 'simple-json',
