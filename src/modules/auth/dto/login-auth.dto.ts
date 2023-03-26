@@ -9,7 +9,7 @@ export class LoginPayloadDto {
     type: String,
     format: 'email',
     default: 'abc@example.com',
-    description: 'Your email address',
+    description: 'Your email address'
   })
   email: string;
 
@@ -20,7 +20,7 @@ export class LoginPayloadDto {
     type: String,
     default: 'abc@123',
     description: 'your password',
-    minLength: 6,
+    minLength: 6
   })
   password: string;
 }

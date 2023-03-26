@@ -20,9 +20,8 @@ export class AuthService {
         ...registrationData,
         password: hashedPassword
       });
-      // delete user.password;
-      const { password, ...result } = createdUser;
-      return result;
+
+      return createdUser;
     } catch (error) {
       if (error.status) {
         throw error;
@@ -43,9 +42,7 @@ export class AuthService {
       );
 
       if (isPasswordMatching) {
-        // delete user.password;
-        const { password, ...result } = user;
-        return result;
+        return user;
       }
       return null;
     } catch (error) {

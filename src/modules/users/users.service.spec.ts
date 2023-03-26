@@ -35,55 +35,57 @@ describe('UsersService', () => {
   });
 });
 
-// test('create method should create a new user', async () => {
-//   const mockUserRepository = {
-//     getInstance: jest.fn().mockReturnValue({}),
-//     findOneBy: jest.fn().mockReturnValue(null),
-//     save: jest.fn().mockReturnValue({ id: 1, name: 'John Doe' })
-//   };
-//   const mockDataSource = {
-//     transaction: jest
-//       .fn()
-//       .mockImplementation((callback) => callback(mockUserRepository))
-//   };
-//   const usersService = new UsersService(
-//     mockUserRepository as unknown as UserRepository,
-//     mockDataSource as unknown as DataSource
-//   );
-//   const createUserDto = { name: 'John Doe', email: 'johndoe@example.com' };
-//   const result = await usersService.create(createUserDto);
-//   expect(mockDataSource.transaction).toHaveBeenCalled();
-//   expect(mockUserRepository.getInstance).toHaveBeenCalled();
-//   expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
-//     email: createUserDto.email
-//   });
-//   expect(mockUserRepository.save).toHaveBeenCalledWith(createUserDto);
-//   expect(result).toEqual({ id: 1, name: 'John Doe' });
-// });
+test('create method should create a new user', async () => {
+  const mockUserRepository = {
+    getInstance: jest.fn().mockReturnValue({}),
+    findOneBy: jest.fn().mockReturnValue(null),
+    save: jest.fn().mockReturnValue({ id: 1, name: 'John Doe' })
+  };
+  const manager = {
+    withRepository: jest.fn().mockReturnValue(mockUserRepository)
+  };
+  const mockDataSource = {
+    transaction: jest.fn().mockImplementation((callback) => callback(manager))
+  };
+  const usersService = new UsersService(
+    mockUserRepository as unknown as UserRepository,
+    mockDataSource as unknown as DataSource
+  );
+  const createUserDto = { name: 'John Doe', email: 'johndoe@example.com' };
+  const result = await usersService.create(createUserDto);
+  expect(mockDataSource.transaction).toHaveBeenCalled();
+  expect(mockUserRepository.getInstance).toHaveBeenCalled();
+  expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
+    email: createUserDto.email
+  });
+  expect(mockUserRepository.save).toHaveBeenCalledWith(createUserDto);
+  expect(result).toEqual({ id: 1, name: 'John Doe' });
+});
 
-// test('create method should throw an error if email is already used', async () => {
-//   const mockUserRepository = {
-//     getInstance: jest.fn().mockReturnValue({}),
-//     findOneBy: jest.fn().mockReturnValue({
-//       id: 1,
-//       name: 'John Doe',
-//       email: 'johndoe@example.com'
-//     })
-//   };
-//   const mockDataSource = {
-//     transaction: jest
-//       .fn()
-//       .mockImplementation((callback) => callback(mockUserRepository))
-//   };
-//   const usersService = new UsersService(
-//     mockUserRepository as unknown as UserRepository,
-//     mockDataSource as unknown as DataSource
-//   );
-//   const createUserDto = { name: 'John Doe', email: 'johndoe@example.com' };
-//   await expect(usersService.create(createUserDto)).rejects.toThrowError(
-//     new HttpException(Errors.EMAIL_USED, HttpStatus.UNPROCESSABLE_ENTITY)
-//   );
-// });
+test('create method should throw an error if email is already used', async () => {
+  const mockUserRepository = {
+    getInstance: jest.fn().mockReturnValue({}),
+    findOneBy: jest.fn().mockReturnValue({
+      id: 1,
+      name: 'John Doe',
+      email: 'johndoe@example.com'
+    })
+  };
+  const manager = {
+    withRepository: jest.fn().mockReturnValue(mockUserRepository)
+  };
+  const mockDataSource = {
+    transaction: jest.fn().mockImplementation((callback) => callback(manager))
+  };
+  const usersService = new UsersService(
+    mockUserRepository as unknown as UserRepository,
+    mockDataSource as unknown as DataSource
+  );
+  const createUserDto = { name: 'John Doe', email: 'johndoe@example.com' };
+  await expect(usersService.create(createUserDto)).rejects.toThrowError(
+    new HttpException(Errors.EMAIL_USED, HttpStatus.UNPROCESSABLE_ENTITY)
+  );
+});
 
 test('getById method should return a user by id', async () => {
   const mockUserRepository = {

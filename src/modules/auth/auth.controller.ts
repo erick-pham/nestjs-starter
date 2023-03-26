@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginPayloadDto } from './dto/login-auth.dto';
+// import { LoginPayloadDto } from './dto/login-auth.dto';
 import { RegisterUserDto } from './dto/register-auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local.guard';
@@ -36,8 +36,8 @@ export class AuthController {
   @Post('login')
   async logIn(
     @Req() req: RequestWithUser,
-    @Res() response: ResponseExpress,
-    @Body() loginPayload: LoginPayloadDto
+    @Res() response: ResponseExpress
+    // @Body() loginPayload: LoginPayloadDto
   ) {
     const tokenData = await this.authService.login(req.user);
     const cookie = this.authService.getCookieWithJwtToken(
@@ -50,7 +50,7 @@ export class AuthController {
 
   @UseGuards(JwtOrApiKeyAuthGuard)
   @Get('profile')
-  getProfile(@Req() req: RequestWithUser) {
+  async getProfile(@Req() req: RequestWithUser) {
     return this.authService.getUserProfile(req.user.id as unknown as string);
   }
 
