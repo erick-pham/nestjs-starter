@@ -27,14 +27,11 @@ export class ApiKeyService {
 
     if (!dbApiKey) {
       dbApiKey = await this.apikeyRepository.findOneBy({
-        apiKey: apiKey
+        apiKey: apiKey,
+        isRevoked: false
       });
 
       await this.cacheManager.set(apiKey, dbApiKey, 1 * 60 * 60 * 1000);
-    }
-
-    if (dbApiKey && dbApiKey.isRevoked !== true) {
-      throw new HttpException(Errors.APIKEY_REVOKED, HttpStatus.UNAUTHORIZED);
     }
 
     if (dbApiKey && dbApiKey.expiredAt && dbApiKey.expiredAt < new Date()) {
