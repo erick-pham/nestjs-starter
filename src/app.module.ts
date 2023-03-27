@@ -15,24 +15,24 @@ import { HealthModule } from './modules/health/health.module';
     TypeOrmModule.forRoot(dataSourceOptions),
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 100,
+      limit: 100
     }),
     UsersModule,
     AuthModule,
-    HealthModule,
+    HealthModule
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: ThrottlerGuard
     },
     {
       provide: APP_FILTER,
-      useClass: HttpErrorFilter,
-    },
-  ],
+      useClass: HttpErrorFilter
+    }
+  ]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

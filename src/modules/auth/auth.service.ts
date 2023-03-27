@@ -23,13 +23,7 @@ export class AuthService {
 
       return createdUser;
     } catch (error) {
-      if (error.status) {
-        throw error;
-      }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+      throw error;
     }
   }
 
@@ -50,11 +44,11 @@ export class AuthService {
     }
   }
 
-  private async hashPassword(password: string): Promise<string> {
+  public async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, BCRYPT_SALT_ROUND);
   }
 
-  private async verifyPassword(
+  public async verifyPassword(
     plainTextPassword: string,
     hashedPassword: string
   ) {

@@ -22,7 +22,7 @@ export class ApiKeyService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
-  public async verifyApiKey(apiKey: string) {
+  public async verifyApiKey(apiKey: string): Promise<ApiKeyEntity | null> {
     let dbApiKey = await this.cacheManager.get<ApiKeyEntity | null>(apiKey);
 
     if (!dbApiKey) {
@@ -62,10 +62,7 @@ export class ApiKeyService {
   }
 
   public async revoke(apiKey: string) {
-    const dbUpdatedResult = await this.apikeyRepository.update(
-      { apiKey },
-      { isRevoked: true }
-    );
-    return dbUpdatedResult;
+    await this.apikeyRepository.update({ apiKey }, { isRevoked: true });
+    return;
   }
 }
