@@ -9,18 +9,16 @@ export class LoggerMiddleware implements NestMiddleware {
     const userAgent = request.get('user-agent') || '';
     const referer = request.get('referer') || '';
     const requestId = uuidV4();
-    request.headers['requestId'] = requestId;
-    response.setHeader('requestId', requestId);
 
-    // this.logger.log(
-    //   `${requestId} ${method} ${originalUrl} - ${referer} ${userAgent} ${ip}`,
-    // );
+    request.headers['Request-Id'] = requestId;
+    response.setHeader('Request-Id', requestId);
+
     response.on('close', () => {
       const { statusCode } = response;
       const contentLength = response.get('content-length');
 
       this.logger.log(
-        `${requestId} - ${method} ${originalUrl} ${statusCode} ${contentLength} - ${referer} ${userAgent} ${ip}`,
+        `${requestId} - ${method} ${originalUrl} ${statusCode} ${contentLength} - ${referer} ${userAgent} ${ip}`
       );
     });
 

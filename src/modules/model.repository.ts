@@ -56,7 +56,7 @@ export class BaseRepository<T extends ObjectLiteral>
 {
   private baseRepository: Repository<T>;
   private attributes: string[];
-  protected constructor(entity: Repository<T>) {
+  constructor(entity: Repository<T>) {
     this.baseRepository = entity;
     this.attributes = entity.metadata.ownColumns.map(
       (column) => column.propertyName
@@ -218,7 +218,7 @@ export class BaseRepository<T extends ObjectLiteral>
         if (operator === 'endsWith') {
           result[key] = Like(`%${inputs[key][operator]}`);
         }
-        if (operator === 'substring') {
+        if (operator === 'subString') {
           result[key] = Like(`%${inputs[key][operator]}%`);
         }
       });

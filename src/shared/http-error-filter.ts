@@ -3,41 +3,64 @@ import {
   ExceptionFilter,
   HttpException,
   ArgumentsHost,
-  Logger,
-  HttpStatus,
+  Logger
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+interface ErrorResponse {
+  error: string;
+  method: string;
+  path: string;
+  statusCode: number;
+  timestamp: string;
+  message?: string | object | any | '';
+}
 @Catch()
 export class HttpErrorFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: HttpException | Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
+    const requestId = response.getHeader('requestId');
 
-    const httpStatus =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const errorResponse = {
+    // handle HttpException | Error, default status code=400
+    let statusCode = 400;
+    let errorResponse: ErrorResponse = {
+      error: 'Bad Request',
+      statusCode: statusCode,
       method: request.method,
       path: request.url,
-      statusCode: httpStatus,
       timestamp: new Date().toISOString(),
-      message: exception.message,
+      message: exception.message
     };
-    const requestId = response.getHeader('requestId');
-    if (httpStatus !== 500) {
-      Logger.warn(exception.message, 'HttpException');
-    } else {
+
+    // handle HttpException
+    if (exception instanceof HttpException) {
+      statusCode = exception.getStatus();
+      if (typeof exception.getResponse() === 'string') {
+        errorResponse.message = exception.getResponse() as string;
+      } else {
+        errorResponse = Object.assign(
+          {},
+          errorResponse,
+          exception.getResponse()
+        );
+      }
+    }
+    errorResponse.statusCode = statusCode;
+
+    if (statusCode >= 500 || process.env.DEBUG_MODE === 'true') {
       Logger.error(
         `${requestId}`,
         exception.stack,
-        'InternalServerErrorException',
+        'InternalServerErrorException'
       );
     }
 
-    response.status(httpStatus).json(errorResponse);
+    if (statusCode >= 500) {
+      errorResponse.message = 'Internal Server Error';
+    }
+
+    response.status(statusCode).json(errorResponse);
   }
 }

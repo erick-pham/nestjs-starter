@@ -89,12 +89,18 @@
   },
   "jest": {
     "modulePathIgnorePatterns": [
+      ".module.ts",
+      "main.ts",
       "<rootDir>/database",
-      "<rootDir>/modules/health"
+      "<rootDir>/modules/health",
+      "<rootDir>/modules/auth/strategies"
     ],
     "coveragePathIgnorePatterns": [
+      ".module.ts",
+      "main.ts",
       "<rootDir>/database",
-      "<rootDir>/modules/health"
+      "<rootDir>/modules/health",
+      "<rootDir>/modules/auth/strategies"
     ],
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/$1"

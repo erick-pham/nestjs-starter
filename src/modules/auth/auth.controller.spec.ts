@@ -30,6 +30,7 @@ import { Response as ResponseExpress } from 'express';
 import { UsersService } from '../users/users.service';
 import { UserRepository } from '../users/users.repository';
 import UserEntity from '../users/entities/user.entity';
+import { LoginPayloadDto } from './dto/login-auth.dto';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -82,10 +83,10 @@ describe('AuthController', () => {
 
   describe('logIn', () => {
     it('should call authService.login with the correct argument', async () => {
-      // const loginPayload: LoginPayloadDto = {
-      //   email: 'testUser',
-      //   password: 'testPassword'
-      // };
+      const loginPayload: LoginPayloadDto = {
+        email: 'testUser',
+        password: 'testPassword'
+      };
 
       const tokenData = { access_token: 'testToken' };
       const req = { user: { id: 'testId' } } as unknown as RequestWithUser;
@@ -105,7 +106,7 @@ describe('AuthController', () => {
       const getCookieSpy = jest
         .spyOn(authService, 'getCookieWithJwtToken')
         .mockReturnValue('testCookie');
-      await controller.logIn(req, res);
+      await controller.logIn(req, res, loginPayload);
       expect(loginSpy).toHaveBeenCalledWith(req.user);
       expect(getCookieSpy).toHaveBeenCalledWith(tokenData.access_token);
       expect(response).toEqual(tokenData);

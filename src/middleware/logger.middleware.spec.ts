@@ -21,10 +21,10 @@ test('LoggerMiddleware should set requestId header and log request information',
   const loggerMiddleware = new LoggerMiddleware();
   loggerMiddleware.use(mockRequest, mockResponse, mockNextFunction);
 
-  expect(mockRequest.headers['requestId']).toBeDefined();
+  expect(mockRequest.headers['Request-Id']).toBeDefined();
   expect(mockResponse.setHeader).toHaveBeenCalledWith(
-    'requestId',
-    mockRequest.headers['requestId']
+    'Request-Id',
+    mockRequest.headers['Request-Id']
   );
   expect(mockResponse.on).toHaveBeenCalledWith('close', expect.any(Function));
 
