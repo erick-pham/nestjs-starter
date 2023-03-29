@@ -12,6 +12,8 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { HttpErrorFilter } from './shared/http-error-filter';
 import { HealthModule } from './modules/health/health.module';
 import { EnvsValidationSchema } from './config/envs';
+import { CoindeskModule } from './modules/coindesk/coindesk.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,7 +28,8 @@ import { EnvsValidationSchema } from './config/envs';
     }),
     UsersModule,
     AuthModule,
-    HealthModule
+    HealthModule,
+    CoindeskModule
   ],
   controllers: [AppController],
   providers: [
