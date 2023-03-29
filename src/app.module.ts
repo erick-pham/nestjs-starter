@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from 'src/modules/users/users.module';
@@ -10,8 +11,14 @@ import { LoggerMiddleware } from 'src/middleware/logger.middleware';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { HttpErrorFilter } from './shared/http-error-filter';
 import { HealthModule } from './modules/health/health.module';
+import { EnvsValidationSchema } from './config/envs';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      validationSchema: EnvsValidationSchema
+    }),
     TypeOrmModule.forRoot(dataSourceOptions),
     ThrottlerModule.forRoot({
       ttl: 60,

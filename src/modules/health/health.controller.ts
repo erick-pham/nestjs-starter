@@ -5,6 +5,7 @@ import {
   TypeOrmHealthIndicator,
   MemoryHealthIndicator,
   DiskHealthIndicator,
+  HttpHealthIndicator
 } from '@nestjs/terminus';
 import { EnvsHealthIndicator } from './envHealthIndicator';
 
@@ -16,6 +17,7 @@ export class HealthController {
     private memoryHealthIndicator: MemoryHealthIndicator,
     private diskHealthIndicator: DiskHealthIndicator,
     private envsHealthIndicator: EnvsHealthIndicator,
+    private http: HttpHealthIndicator
   ) {}
 
   @Get()
@@ -30,12 +32,13 @@ export class HealthController {
       () =>
         this.memoryHealthIndicator.checkRSS('memory RSS', 300 * 1024 * 1024),
       // The used disk storage should not exceed 200 GB
-      () =>
-        this.diskHealthIndicator.checkStorage('storage', {
-          threshold: 200 * 1024 * 1024 * 1024,
-          path: 'D:\\',
-        }),
+      // () =>
+      //   this.diskHealthIndicator.checkStorage('storage', {
+      //     threshold: 200 * 1024 * 1024 * 1024,
+      //     path: 'D:\\'
+      //   }),
       () => this.envsHealthIndicator.isHealthy('envs'),
+      () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')
     ]);
   }
 }
