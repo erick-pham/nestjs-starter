@@ -9,18 +9,16 @@ import {
   ParseIntPipe,
   Query
 } from '@nestjs/common';
-import {
-  ApiExtraModels,
-  ApiResponse,
-  getSchemaPath,
-  ApiTags
-} from '@nestjs/swagger';
+import { ApiResponse, getSchemaPath, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import * as GetUserExample from './dto/get-user-example';
 import { PaginationParams } from 'src/shared/pagination-params';
+import Role from 'src/shared/enums/role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
@@ -32,6 +30,7 @@ export class UsersController {
   }
 
   @Get()
+  @Roles(Role.Admin)
   findAll(
     @Query()
     searchListAndPagination: PaginationParams
@@ -39,7 +38,6 @@ export class UsersController {
     return this.usersService.searchForUsers(searchListAndPagination);
   }
 
-  @ApiExtraModels(GetUserDto)
   @ApiResponse({
     status: 200,
     description: 'Successful response',
