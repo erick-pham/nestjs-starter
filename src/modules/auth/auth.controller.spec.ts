@@ -49,16 +49,13 @@ describe('AuthController', () => {
         AuthService,
         JwtService,
         UsersService,
-        // {
-        //   provide: UsersService,
-        //   useFactory: mockUsersService
-        // },
         {
           provide: UserRepository,
           useFactory: mockUserRepository
         }
       ]
     }).compile();
+
     controller = module.get<AuthController>(AuthController);
     authService = module.get<AuthService>(AuthService);
   });

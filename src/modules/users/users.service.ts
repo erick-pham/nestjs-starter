@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { UserEntity } from './entities/user.entity';
+import UserEntity from './entities/user.entity';
 import {
   CreateUserDto,
   CreateUserWithPasswordDto

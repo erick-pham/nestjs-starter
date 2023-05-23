@@ -1,12 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CoindeskController } from './coindesk.controller';
+import { HttpModule } from '@nestjs/axios';
+import { CoindeskService } from './coindesk.service';
 
 describe('CoindeskController', () => {
   let controller: CoindeskController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CoindeskController]
+      imports: [HttpModule],
+      controllers: [CoindeskController],
+      providers: [CoindeskService]
     }).compile();
 
     controller = module.get<CoindeskController>(CoindeskController);

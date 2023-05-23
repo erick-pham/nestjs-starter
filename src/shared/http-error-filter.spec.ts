@@ -23,6 +23,7 @@ describe('HttpErrorFilter', () => {
     const response = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
+      send: jest.fn(),
       getHeader: jest.fn().mockReturnValue('test-Request-Id')
     } as unknown as Response;
     const host = {
@@ -36,15 +37,10 @@ describe('HttpErrorFilter', () => {
     filter.catch(error, host);
 
     // Assert
-    expect(response.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
-    expect(response.json).toHaveBeenCalledWith({
-      error: 'Bad Request',
-      statusCode: HttpStatus.BAD_REQUEST,
-      method: request.method,
-      path: request.url,
-      timestamp: expect.any(String),
-      message: 'Test error'
-    });
+    expect(response.status).toHaveBeenCalledWith(
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+    expect(response.send).toHaveBeenCalledWith('Internal Server Error');
   });
 
   it('should handle HttpException and return its status code', () => {
@@ -54,6 +50,7 @@ describe('HttpErrorFilter', () => {
     const response = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
+      send: jest.fn(),
       getHeader: jest.fn().mockReturnValue('test-Request-Id')
     } as unknown as Response;
     const host = {
@@ -64,20 +61,23 @@ describe('HttpErrorFilter', () => {
     } as ArgumentsHost;
 
     const currentDate = new Date('2023-01-01');
-    jest.spyOn(global, 'Date').mockImplementation(() => currentDate as any);
-
+    // jest.spyOn(global, 'Date').mockImplementation(() => currentDate as any);
+    jest.spyOn(global.Date, 'now').mockImplementation(() => 1682045069426);
     // Act
     filter.catch(error, host);
 
     // Assert
     expect(response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
     expect(response.json).toHaveBeenCalledWith({
-      error: 'Bad Request',
-      statusCode: HttpStatus.NOT_FOUND,
-      method: request.method,
-      path: request.url,
-      timestamp: new Date('2023-01-01').toISOString(),
-      message: 'Test error'
+      // error: 'Bad Request',
+      // statusCode: HttpStatus.NOT_FOUND,
+      // method: request.method,
+      // path: request.url,
+      // timestamp: new Date('2023-01-01').toISOString(),
+      // message: 'Test error'
+      error: true,
+      errorCode: 'HttpException',
+      errorMessage: 'Test error'
     });
   });
 
@@ -91,6 +91,7 @@ describe('HttpErrorFilter', () => {
     const response = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
+      send: jest.fn(),
       getHeader: jest.fn().mockReturnValue('test-Request-Id')
     } as unknown as Response;
     const host = {
@@ -101,21 +102,24 @@ describe('HttpErrorFilter', () => {
     } as ArgumentsHost;
 
     const currentDate = new Date('2023-01-01');
-    jest.spyOn(global, 'Date').mockImplementation(() => currentDate as any);
-
+    // jest.spyOn(global, 'Date').mockImplementation(() => currentDate as any);
+    jest.spyOn(global.Date, 'now').mockImplementation(() => 1682045069426);
     // Act
     filter.catch(error, host);
 
     // Assert
     expect(response.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
     expect(response.json).toHaveBeenCalledWith({
-      error: 'Bad Request',
-      statusCode: HttpStatus.UNAUTHORIZED,
-      method: request.method,
-      path: request.url,
-      timestamp: new Date('2023-01-01').toISOString(),
-      message: 'Test error',
-      errorCode: '123'
+      // error: 'Bad Request',
+      // statusCode: HttpStatus.UNAUTHORIZED,
+      // method: request.method,
+      // path: request.url,
+      // timestamp: new Date('2023-01-01').toISOString(),
+      // message: 'Test error',
+      // errorCode: '123'
+      error: true,
+      errorCode: '123',
+      errorMessage: 'Test error'
     });
   });
 
@@ -129,6 +133,7 @@ describe('HttpErrorFilter', () => {
     const response = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
+      send: jest.fn(),
       getHeader: jest.fn().mockReturnValue('test-Request-Id')
     } as unknown as Response;
     const host = {
