@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginEmailPayloadDto, LoginPayloadDto } from './dto/login-auth.dto';
+import {
+  LoginEmailPayloadDto,
+  LoginPayloadDto,
+  LoginWithProviderPayloadDto
+} from './dto/login-auth.dto';
 import { RegisterUserDto } from './dto/register-auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local.guard';
@@ -55,6 +59,17 @@ export class AuthController {
     @Body() loginPayload: LoginEmailPayloadDto
   ) {
     const tokenData = await this.authService.loginViaEmail(loginPayload);
+    response.status(tokenData.status).send(tokenData);
+    return;
+  }
+
+  @HttpCode(200)
+  @Post('sign-in/provider')
+  async logInWithProvider(
+    @Res() response: ResponseExpress,
+    @Body() loginPayload: LoginWithProviderPayloadDto
+  ) {
+    const tokenData = await this.authService.loginWithProvider(loginPayload);
     response.status(tokenData.status).send(tokenData);
     return;
   }

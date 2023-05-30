@@ -1,21 +1,29 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const bcrypt = require('bcrypt');
 import { RegisterUserDto } from 'src/modules/auth/dto/register-auth.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { BCRYPT_SALT_ROUND, jwtConstants } from 'src/constants/constants';
-import { LoginEmailPayloadDto } from './dto/login-auth.dto';
+import {
+  ELoginProvider,
+  LoginEmailPayloadDto,
+  LoginWithProviderPayloadDto
+} from './dto/login-auth.dto';
 import { VerificationRepository } from './verification-token.repository';
 import MessagePatternResponse from 'src/shared/response/message-pattern-response';
 import * as Errors from 'src/constants/errors';
 import { generateKey } from 'src/shared/crypto';
+import MSALServices from './msal.service';
+import { AccountRepository } from './account.repository';
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private verificationRepository: VerificationRepository
+    private verificationRepository: VerificationRepository,
+    private msalService: MSALServices,
+    private accountRepository: AccountRepository
   ) {}
 
   public async registerUser(registrationData: RegisterUserDto) {
@@ -133,6 +141,63 @@ export class AuthService {
       return new MessagePatternResponse().send(res);
     }
   }
+
+  async loginWithProvider(
+    loginWithProviderPayload: LoginWithProviderPayloadDto
+  ): Promise<any> {
+    if (loginWithProviderPayload.provider === ELoginProvider.Azure) {
+      const msalUserInfo = await this.msalService.getUserInfo(
+        loginWithProviderPayload.token
+      );
+
+      const currentAccount = await this.accountRepository.findOneBy({
+        provider: ELoginProvider.Azure,
+        providerAccountId: msalUserInfo.id
+      });
+
+      const jwtPayload = {
+        email: msalUserInfo.email,
+        sub: ''
+      };
+
+      // existing account
+      if (currentAccount) {
+        jwtPayload.sub = currentAccount.userId;
+      } else {
+        // new account
+        let currentUser = await this.usersService.getByEmail(
+          msalUserInfo.email
+        );
+        if (currentUser) {
+          return new MessagePatternResponse()
+            .setStatus(400)
+            .sendErrors([Errors.EMAIL_USED]);
+        }
+
+        currentUser = await this.usersService.create({
+          name: msalUserInfo.name,
+          email: msalUserInfo.email
+        });
+        jwtPayload.sub = currentUser.id;
+
+        await this.accountRepository.save({
+          userId: currentUser.id,
+          type: 'oauth',
+          provider: ELoginProvider.Azure,
+          providerAccountId: msalUserInfo.id
+        });
+      }
+
+      const res = {
+        access_token: this.jwtService.sign(jwtPayload)
+      };
+      return new MessagePatternResponse().send(res);
+    }
+    return new MessagePatternResponse()
+      .setStatus(401)
+      .sendErrors([Errors.LOGIN_PROVIDER_INVALID]);
+  }
+
   async getUserProfile(id: string) {
     return this.usersService.getById(id);
   }

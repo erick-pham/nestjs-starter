@@ -7,6 +7,15 @@ import { map, catchError } from 'rxjs';
 export class CoindeskService {
   private readonly logger = new Logger(CoindeskService.name);
   constructor(private http: HttpService) {}
+
+  logError(error: AxiosError) {
+    this.logger.error(error.message, {
+      data: error.config?.data,
+      headers: error.config?.headers,
+      url: error.config?.url
+    });
+  }
+
   async getBitcoinPriceUSD() {
     return this.http
       .get('https://api.coindesk.com/v1/bpi/currentprice.json')

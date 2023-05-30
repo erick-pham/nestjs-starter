@@ -8,3 +8,4 @@ export const APIKEY_EXPIRED = 'The api key was expired';
 export const APIKEY_REVOKED = 'The api key was revoked';
 export const TOKEN_INVALID = 'The token invalid';
 export const TOKEN_EXPIRED = 'The token was expired';
+export const LOGIN_PROVIDER_INVALID = 'The login provider is invalid';

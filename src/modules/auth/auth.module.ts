@@ -15,6 +15,10 @@ import { ApiKeyEntity } from './entities/api-key.entity';
 import { ApiKeyStrategy } from './strategies/api-key.strategy';
 import { VerificationRepository } from './verification-token.repository';
 import { VerificationTokenEntity } from './entities/verification-token.entity';
+import MSALServices from './msal.service';
+import { HttpModule } from '@nestjs/axios';
+import { AccountRepository } from './account.repository';
+import { AccountEntity } from './entities/account.entity';
 
 @Module({
   imports: [
@@ -22,7 +26,12 @@ import { VerificationTokenEntity } from './entities/verification-token.entity';
     UsersModule,
     PassportModule,
     JwtModule.register(jwtConstants),
-    TypeOrmModule.forFeature([ApiKeyEntity, VerificationTokenEntity])
+    TypeOrmModule.forFeature([
+      ApiKeyEntity,
+      VerificationTokenEntity,
+      AccountEntity
+    ]),
+    HttpModule
   ],
   controllers: [AuthController, ApiKeyController],
   providers: [
@@ -32,7 +41,9 @@ import { VerificationTokenEntity } from './entities/verification-token.entity';
     ApiKeyStrategy,
     ApiKeyService,
     ApiKeyRepository,
-    VerificationRepository
+    VerificationRepository,
+    MSALServices,
+    AccountRepository
   ]
 })
 export class AuthModule {}

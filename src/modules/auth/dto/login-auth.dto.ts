@@ -8,6 +8,12 @@ import {
   IsOptional
 } from 'class-validator';
 
+export enum ELoginProvider {
+  Credentials = 'credentials',
+  Email = 'email',
+  Azure = 'azure'
+}
+
 export class LoginPayloadDto {
   @IsString()
   @IsEmail()
@@ -54,6 +60,27 @@ export class LoginEmailPayloadDto {
     description:
       'The one time token to login with magic link. Consumer send this token and email back to Auth service to retrieve access token',
     minLength: 36
+  })
+  token: string;
+}
+
+export class LoginWithProviderPayloadDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    default: 'azure',
+    enum: ['azure'],
+    description: 'Identify provider. E.g google, azure, okta'
+  })
+  provider: string;
+
+  @IsString()
+  @MaxLength(3000)
+  @ApiProperty({
+    type: String,
+    required: true,
+    description: 'The access token from provider'
   })
   token: string;
 }
