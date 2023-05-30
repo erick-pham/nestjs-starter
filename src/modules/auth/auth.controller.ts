@@ -21,6 +21,10 @@ import { LocalAuthGuard } from './guards/local.guard';
 import RequestWithUser from '../../shared/interfaces/request-with-user.interface';
 import { Response as ResponseExpress } from 'express';
 import { JwtOrApiKeyAuthGuard } from './guards/api-key-or-jwt.guard';
+import {
+  ForgotPasswordPayloadDto,
+  ResetPasswordPayloadDto
+} from './dto/forgot-password.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -70,6 +74,32 @@ export class AuthController {
     @Body() loginPayload: LoginWithProviderPayloadDto
   ) {
     const tokenData = await this.authService.loginWithProvider(loginPayload);
+    response.status(tokenData.status).send(tokenData);
+    return;
+  }
+
+  @HttpCode(200)
+  @Post('forgot-password')
+  async forgotPassword(
+    @Res() response: ResponseExpress,
+    @Body() forgotPasswordPayload: ForgotPasswordPayloadDto
+  ) {
+    const tokenData = await this.authService.forgotPassword(
+      forgotPasswordPayload
+    );
+    response.status(tokenData.status).send(tokenData);
+    return;
+  }
+
+  @HttpCode(200)
+  @Post('reset-password')
+  async resetPassword(
+    @Res() response: ResponseExpress,
+    @Body() resetPasswordPayload: ResetPasswordPayloadDto
+  ) {
+    const tokenData = await this.authService.resetPassword(
+      resetPasswordPayload
+    );
     response.status(tokenData.status).send(tokenData);
     return;
   }

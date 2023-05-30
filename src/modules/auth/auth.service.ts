@@ -16,6 +16,11 @@ import * as Errors from 'src/constants/errors';
 import { generateKey } from 'src/shared/crypto';
 import MSALServices from './msal.service';
 import { AccountRepository } from './account.repository';
+import {
+  ForgotPasswordPayloadDto,
+  ResetPasswordPayloadDto
+} from './dto/forgot-password.dto';
+import { EVerificationTokenType } from './entities/verification-token.entity';
 @Injectable()
 export class AuthService {
   constructor(
@@ -91,7 +96,8 @@ export class AuthService {
     if (loginViaEmail.token) {
       const verifiedRs = await this.verificationRepository.findOneBy({
         token: loginViaEmail.token,
-        identifier: loginViaEmail.email
+        identifier: loginViaEmail.email,
+        type: EVerificationTokenType.LoginEmail
       });
 
       if (!verifiedRs) {
@@ -128,6 +134,7 @@ export class AuthService {
       await this.verificationRepository.save({
         identifier: loginViaEmail.email,
         token: oneTimeToken,
+        type: EVerificationTokenType.LoginEmail,
         expires: new Date(new Date().getTime() + 1000 * 60 * 30) // 30min
       });
 
@@ -196,6 +203,80 @@ export class AuthService {
     return new MessagePatternResponse()
       .setStatus(401)
       .sendErrors([Errors.LOGIN_PROVIDER_INVALID]);
+  }
+
+  async forgotPassword(
+    forgotPasswordPayload: ForgotPasswordPayloadDto
+  ): Promise<any> {
+    const currentUser = await this.usersService.getByEmail(
+      forgotPasswordPayload.email
+    );
+
+    if (!currentUser) {
+      return new MessagePatternResponse()
+        .setStatus(400)
+        .sendErrors([Errors.USER_NOT_FOUND]);
+    }
+
+    const oneTimeToken = generateKey(24, 'base64url');
+    const newDb = {
+      identifier: forgotPasswordPayload.email,
+      token: oneTimeToken,
+      type: EVerificationTokenType.ResetPassword,
+      expires: new Date(new Date().getTime() + 1000 * 60 * 30) // 30min
+    };
+    await this.verificationRepository.save(newDb);
+
+    return new MessagePatternResponse().send({
+      email: newDb.identifier,
+      expires: newDb.expires
+    });
+  }
+
+  async resetPassword(
+    resetPasswordPayload: ResetPasswordPayloadDto
+  ): Promise<any> {
+    const verification = await this.verificationRepository.findOneBy({
+      token: resetPasswordPayload.token,
+      type: EVerificationTokenType.ResetPassword
+    });
+
+    if (!verification) {
+      return new MessagePatternResponse()
+        .setStatus(401)
+        .sendErrors([Errors.TOKEN_INVALID]);
+    }
+
+    if (verification.isExpired || verification.expires < new Date()) {
+      return new MessagePatternResponse()
+        .setStatus(401)
+        .sendErrors([Errors.TOKEN_EXPIRED]);
+    }
+
+    const currentUser = await this.usersService.getByEmail(
+      verification.identifier
+    );
+
+    if (!currentUser) {
+      return new MessagePatternResponse()
+        .setStatus(401)
+        .sendErrors([Errors.USER_NOT_FOUND]);
+    }
+
+    const hashedPassword = await this.hashPassword(
+      resetPasswordPayload.password
+    );
+
+    await this.usersService.updatePassword(currentUser.id, hashedPassword);
+    await this.verificationRepository.update(
+      {
+        id: verification.id
+      },
+      {
+        isExpired: true
+      }
+    );
+    return new MessagePatternResponse().sendSuccess();
   }
 
   async getUserProfile(id: string) {

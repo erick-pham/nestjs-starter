@@ -15,6 +15,14 @@ export default class MessagePatternResponse {
     return this;
   }
 
+  sendSuccess<T>(msg?: any) {
+    return {
+      error: false,
+      status: this.status,
+      data: msg || 'Success'
+    } as T;
+  }
+
   sendErrors<T>(errors: string[]) {
     return {
       error: true,

@@ -73,6 +73,17 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
+  async updatePassword(id: string, password: string) {
+    return this.usersRepository.update(
+      {
+        id: id
+      },
+      {
+        password
+      }
+    );
+  }
+
   async remove(id: number) {
     return `This action removes a #${id} user`;
   }
