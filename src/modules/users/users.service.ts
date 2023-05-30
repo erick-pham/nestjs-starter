@@ -48,10 +48,7 @@ export class UsersService {
 
   async getByEmail(email: string) {
     const user = await this.usersRepository.findOne({ where: { email } });
-    if (user) {
-      return user;
-    }
-    throw new HttpException(Errors.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND);
+    return user;
   }
 
   findAll(): Promise<UserEntity[]> {

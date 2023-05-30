@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginPayloadDto } from './dto/login-auth.dto';
+import { LoginEmailPayloadDto, LoginPayloadDto } from './dto/login-auth.dto';
 import { RegisterUserDto } from './dto/register-auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local.guard';
@@ -33,7 +33,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
-  @Post('login')
+  @Post('sign-in/credentials')
   async logIn(
     @Req() req: RequestWithUser,
     @Res() response: ResponseExpress,
@@ -45,6 +45,17 @@ export class AuthController {
     );
     response.setHeader('Set-Cookie', cookie);
     response.send(tokenData);
+    return;
+  }
+
+  @HttpCode(200)
+  @Post('sign-in/email')
+  async logInViaMagicLink(
+    @Res() response: ResponseExpress,
+    @Body() loginPayload: LoginEmailPayloadDto
+  ) {
+    const tokenData = await this.authService.loginViaEmail(loginPayload);
+    response.status(tokenData.status).send(tokenData);
     return;
   }
 

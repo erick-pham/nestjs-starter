@@ -13,6 +13,8 @@ import { ApiKeyController } from './api-key.controller';
 import { ApiKeyRepository } from './api-key.repository';
 import { ApiKeyEntity } from './entities/api-key.entity';
 import { ApiKeyStrategy } from './strategies/api-key.strategy';
+import { VerificationRepository } from './verification-token.repository';
+import { VerificationTokenEntity } from './entities/verification-token.entity';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { ApiKeyStrategy } from './strategies/api-key.strategy';
     UsersModule,
     PassportModule,
     JwtModule.register(jwtConstants),
-    TypeOrmModule.forFeature([ApiKeyEntity])
+    TypeOrmModule.forFeature([ApiKeyEntity, VerificationTokenEntity])
   ],
   controllers: [AuthController, ApiKeyController],
   providers: [
@@ -29,7 +31,8 @@ import { ApiKeyStrategy } from './strategies/api-key.strategy';
     JwtStrategy,
     ApiKeyStrategy,
     ApiKeyService,
-    ApiKeyRepository
+    ApiKeyRepository,
+    VerificationRepository
   ]
 })
 export class AuthModule {}

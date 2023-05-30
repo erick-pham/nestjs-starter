@@ -6,3 +6,5 @@ export const USER_NOT_FOUND = 'User not found';
 export const APIKEY_INVALID = 'The api key is invalid';
 export const APIKEY_EXPIRED = 'The api key was expired';
 export const APIKEY_REVOKED = 'The api key was revoked';
+export const TOKEN_INVALID = 'The token invalid';
+export const TOKEN_EXPIRED = 'The token was expired';
