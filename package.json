@@ -25,7 +25,8 @@
     "migration:generate:shell": "npm run build && npm run typeorm -- migration:generate ./src/database/migrations/%npm_config_name%",
     "migration:generate:bash": "npm run build && npm run typeorm -- migration:generate ./src/database/migrations/$npm_config_name",
     "migration:up": "npm run typeorm -- migration:run",
-    "migration:down": "npm run typeorm -- migration:revert"
+    "migration:down": "npm run typeorm -- migration:revert",
+    "build:ana-widget": "cross-env NODE_ENV=production LIBRARY_NAME=EPAnalytics INPUT=./widget/analytics/index.js OUTPUT=widget-analytics-latest.min.js webpack --config ./webpack.config.js"
   },
   "dependencies": {
     "@nestjs/axios": "^2.0.0",
@@ -79,6 +80,7 @@
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "babel-loader": "^9.1.2",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -91,7 +93,8 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.1",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "webpack-cli": "^5.1.4"
   },
   "jest": {
     "modulePathIgnorePatterns": [
