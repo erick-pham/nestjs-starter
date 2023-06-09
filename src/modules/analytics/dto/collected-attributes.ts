@@ -19,6 +19,14 @@ export class CollectedAttributes {
 
   @ApiProperty({
     type: String,
+    default: null,
+    required: false,
+    description: 'Language'
+  })
+  ul: string;
+
+  @ApiProperty({
+    type: String,
     default: 'A-AB-124RGH#',
     required: true,
     description: 'Collection Ref ID'
@@ -90,14 +98,6 @@ export class CollectedAttributes {
     description: 'Event label'
   })
   el: string;
-
-  @ApiProperty({
-    type: String,
-    default: null,
-    required: false,
-    description: 'Language'
-  })
-  user_lang: string;
 
   @ApiProperty({
     type: String,

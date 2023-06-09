@@ -25,7 +25,7 @@ export class AnalyticsService {
     const createdCat = new this.sessionDataModel({
       collection_ref: collectedAttributes.cid,
       user_ref: collectedAttributes.uid,
-      user_lang: collectedAttributes.user_lang,
+      user_lang: collectedAttributes.ul,
       device: device,
       browser: browser || null,
       os: os || null,
