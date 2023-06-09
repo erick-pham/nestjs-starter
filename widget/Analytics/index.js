@@ -1,4 +1,5 @@
 let configs = null;
+let geolocation = null;
 
 function setCookie(cname, cvalue, exdays) {
   const d = new Date();
@@ -35,7 +36,7 @@ function callApi({
     return;
   }
 
-  let url = 'https://pewter-chalk-minotaurasaurus.glitch.me/collect';
+  let url = null;
   let options = {};
 
   if (configs.options) {
@@ -53,6 +54,10 @@ function callApi({
   const params = {
     cid: configs.id,
     uid: configs.uid,
+    ul: navigator.language,
+    g_lat: geolocation.latitude,
+    g_lon: geolocation.longitude,
+    g_acc: geolocation.accuracy,
     t: type,
     sr: `${window.screen.width}x${window.screen.height}`,
     dl: currentOrigin,
@@ -96,7 +101,7 @@ function handleNavigation() {
   });
 }
 
-export function init(id, options = {}) {
+export function init(id, options = {}, extra = {}) {
   configs = {
     id: id,
     options: options
@@ -110,6 +115,27 @@ export function init(id, options = {}) {
     var session_id = Math.random().toString(16).slice(2);
     configs.uid = `EA.${session_id}.${seconds}`;
     setCookie('_ea', configs.uid, 365);
+  }
+
+  if (!geolocation && extra && extra.allowedGeo === true) {
+    function success(pos) {
+      const crd = pos.coords;
+      geolocation = {
+        latitude: crd.latitude,
+        longitude: crd.longitude,
+        accuracy: crd.accuracy
+      };
+    }
+
+    function error(err) {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+
+    navigator.geolocation.getCurrentPosition(success, error, {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    });
   }
 }
 

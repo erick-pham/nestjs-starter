@@ -5,7 +5,8 @@
   <meta charset="utf-8">
   <title>Analytics POC</title>
 
-  <script src="https://erick-analytics-poc.glitch.me/widget-analytics-latest.min.js" type="text/javascript"></script>
+  <!-- <script src="https://erick-analytics-poc.glitch.me/widget-analytics-latest.min.js" type="text/javascript"></script> -->
+  <script src="./widget/widget-analytics-latest.min.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -15,11 +16,15 @@
   <h3 onclick="myFunction1()">Try Event.</h3>
 
   <h3 onclick="myFunction2()">Try Navigation.</h3>
+
+  <h3 onclick="myFunction3()">TEST.</h3>
   <div id="app"></div>
 </body>
 <script>
-  EPAnalytics.init('ABC',{
-    url:'https://erick-analytics-poc.glitch.me/collect'
+  EPAnalytics.init('ABC', {
+    url: 'https://erick-analytics-poc.glitch.me/collect'
+  }, {
+    allowedGeo: true
   });
 </script>
 <!-- Render component -->
@@ -32,8 +37,11 @@
 
   function myFunction2() {
     EPAnalytics.pageview({
-      path: '/about', title:'About'
+      path: '/about', title: 'About'
     })
+  }
+
+  function myFunction3() {
   }
 </script>
 
