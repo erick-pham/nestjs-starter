@@ -18,20 +18,20 @@
   <div id="app"></div>
 </body>
 <script>
-  Analytics360F.init('ABC',{
+  EPAnalytics.init('ABC',{
     url:'https://erick-analytics-poc.glitch.me/collect'
   });
 </script>
 <!-- Render component -->
 <script>
   function myFunction1() {
-    Analytics360F.event({
+    EPAnalytics.event({
       category: 'cat2', action: 'Buy', label: 'TEST'
     })
   }
 
   function myFunction2() {
-    Analytics360F.pageview({
+    EPAnalytics.pageview({
       path: '/about', title:'About'
     })
   }
