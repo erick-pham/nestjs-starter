@@ -35,7 +35,7 @@ function callApi({
     return;
   }
 
-  let url = null;
+  let url = 'https://pewter-chalk-minotaurasaurus.glitch.me/collect';
   let options = {};
 
   if (configs.options) {
@@ -92,10 +92,7 @@ function handleNavigation() {
     type: 'pageview',
     currentOrigin,
     currentPath,
-    currentTitle,
-    eventCategory: null,
-    eventType: null,
-    eventName: null
+    currentTitle
   });
 }
 
@@ -116,7 +113,7 @@ export function init(id, options = {}) {
   }
 }
 
-export function event({ category, type, name }) {
+export function event({ category, action, label }) {
   var currentOrigin = getCurrentOrigin();
   var currentPath = getCurrentPath();
   var currentTitle = getCurrentTitle();
@@ -126,8 +123,8 @@ export function event({ category, type, name }) {
     currentPath,
     currentTitle,
     eventCategory: category,
-    eventType: type,
-    eventName: name
+    eventAction: action,
+    eventLabel: label
   });
 }
 

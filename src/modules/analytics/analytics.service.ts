@@ -36,7 +36,7 @@ export class AnalyticsService {
       page_title: collectedAttributes.dt || null,
       screen_size: collectedAttributes.sr || null,
       event_category: collectedAttributes.ec || null,
-      event_action: collectedAttributes.ec || null,
+      event_action: collectedAttributes.ea || null,
       event_label: collectedAttributes.el || null
     });
     await createdCat.save();
