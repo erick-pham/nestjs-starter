@@ -10,6 +10,18 @@ export class SessionData {
   user_ref: string;
 
   @Prop()
+  user_lang: string;
+
+  @Prop()
+  geo_lat: string;
+
+  @Prop()
+  geo_lon: string;
+
+  @Prop()
+  geo_accuracy: string;
+
+  @Prop()
   device: string;
 
   @Prop()

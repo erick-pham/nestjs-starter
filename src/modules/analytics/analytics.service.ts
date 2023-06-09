@@ -25,6 +25,7 @@ export class AnalyticsService {
     const createdCat = new this.sessionDataModel({
       collection_ref: collectedAttributes.cid,
       user_ref: collectedAttributes.uid,
+      user_lang: collectedAttributes.user_lang,
       device: device,
       browser: browser || null,
       os: os || null,
@@ -37,7 +38,10 @@ export class AnalyticsService {
       screen_size: collectedAttributes.sr || null,
       event_category: collectedAttributes.ec || null,
       event_action: collectedAttributes.ea || null,
-      event_label: collectedAttributes.el || null
+      event_label: collectedAttributes.el || null,
+      geo_lon: collectedAttributes.geo_lon || null,
+      geo_lat: collectedAttributes.geo_lat || null,
+      geo_accuracy: collectedAttributes.geo_accuracy || null
     });
     await createdCat.save();
     return;

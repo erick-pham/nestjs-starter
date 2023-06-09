@@ -90,4 +90,36 @@ export class CollectedAttributes {
     description: 'Event label'
   })
   el: string;
+
+  @ApiProperty({
+    type: String,
+    default: null,
+    required: false,
+    description: 'Language'
+  })
+  user_lang: string;
+
+  @ApiProperty({
+    type: String,
+    default: null,
+    required: false,
+    description: 'Geo lat'
+  })
+  geo_lat: string;
+
+  @ApiProperty({
+    type: String,
+    default: null,
+    required: false,
+    description: 'Geo lon'
+  })
+  geo_lon: string;
+
+  @ApiProperty({
+    type: String,
+    default: null,
+    required: false,
+    description: 'Geo accuracy'
+  })
+  geo_accuracy: string;
 }
