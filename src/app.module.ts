@@ -13,6 +13,7 @@ import { HttpErrorFilter } from './shared/http-error-filter';
 import { HealthModule } from './modules/health/health.module';
 import { EnvsValidationSchema } from './config/envs';
 import { CoindeskModule } from './modules/coindesk/coindesk.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -26,10 +27,11 @@ import { CoindeskModule } from './modules/coindesk/coindesk.module';
       ttl: 60,
       limit: 100
     }),
-    UsersModule,
-    AuthModule,
-    HealthModule,
-    CoindeskModule
+    // UsersModule,
+    // AuthModule,
+    // HealthModule,
+    // CoindeskModule,
+    AnalyticsModule
   ],
   controllers: [AppController],
   providers: [
