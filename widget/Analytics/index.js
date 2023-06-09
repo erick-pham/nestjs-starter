@@ -128,6 +128,17 @@ export function event({ category, action, label }) {
   });
 }
 
+// Trigger pageview manually
+export function pageview({ path, title }) {
+  var currentOrigin = getCurrentOrigin();
+  callApi({
+    type: 'pageview',
+    currentOrigin,
+    currentPath: path,
+    currentTitle: title
+  });
+}
+
 // Attach the event listener for page navigation
 document.addEventListener('DOMContentLoaded', function () {
   handleNavigation();
