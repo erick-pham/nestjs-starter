@@ -39,9 +39,9 @@ export class AnalyticsService {
       event_category: collectedAttributes.ec || null,
       event_action: collectedAttributes.ea || null,
       event_label: collectedAttributes.el || null,
-      geo_lon: collectedAttributes.geo_lon || null,
-      geo_lat: collectedAttributes.geo_lat || null,
-      geo_accuracy: collectedAttributes.geo_accuracy || null
+      geo_lon: collectedAttributes.g_lon || null,
+      geo_lat: collectedAttributes.g_lat || null,
+      geo_accuracy: collectedAttributes.g_acc || null
     });
     await createdCat.save();
     return;

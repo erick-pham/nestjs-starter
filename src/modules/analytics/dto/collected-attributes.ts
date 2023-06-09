@@ -105,7 +105,7 @@ export class CollectedAttributes {
     required: false,
     description: 'Geo lat'
   })
-  geo_lat: string;
+  g_lat: string;
 
   @ApiProperty({
     type: String,
@@ -113,7 +113,7 @@ export class CollectedAttributes {
     required: false,
     description: 'Geo lon'
   })
-  geo_lon: string;
+  g_lon: string;
 
   @ApiProperty({
     type: String,
@@ -121,5 +121,5 @@ export class CollectedAttributes {
     required: false,
     description: 'Geo accuracy'
   })
-  geo_accuracy: string;
+  g_acc: string;
 }
